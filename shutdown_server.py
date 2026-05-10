@@ -20,8 +20,9 @@ from mcp.server.fastmcp import FastMCP
 # ---------------------------------------------------------------------------
 TOKEN = os.environ.get("MCP_SHUTDOWN_TOKEN", "")
 PORT  = int(os.environ.get("MCP_SHUTDOWN_PORT", "8000"))
+HOST  = os.environ.get("MCP_SHUTDOWN_HOST", "locaohost")
 
-mcp = FastMCP("windows-shutdown", port=PORT)
+mcp = FastMCP("windows-shutdown", port=PORT, host=HOST)
 
 def _auth(token: str) -> bool:
     """Return True if token auth is disabled or the token matches."""
