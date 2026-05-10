@@ -115,12 +115,13 @@ All tools accept an optional `token` argument (required if `MCP_SHUTDOWN_TOKEN` 
 
 ---
 
-## Changing the Port
+## Changing the Port/Host
 
-Open `start_mcp.bat` and change:
+Open `start_mcp.bat` and `wsl-mcp-shutdown.bat` (in Startup) and change:
 
 ```bat
 set "MCP_SHUTDOWN_PORT=8000"
+set "MCP_SHUTDOWN_HOST=<your host IP>"
 ```
 
 Then update the port in your MCP client config to match.
@@ -129,7 +130,7 @@ Then update the port in your MCP client config to match.
 
 ## Auto-start Behaviour
 
-The installer places `start_mcp.bat` in:
+The installer places `wsl-mcp-shutdown.bat` in:
 
 ```
 %APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\
@@ -157,7 +158,7 @@ This removes the Startup shortcut and the `.venv` folder. The repo directory its
 
 ## Security Notes
 
-- The server binds to all interfaces (`0.0.0.0`) by default. It is **strongly recommended** to set `MCP_SHUTDOWN_TOKEN`.
+- It is **strongly recommended** to set `MCP_SHUTDOWN_TOKEN`.
 - For extra isolation, configure Windows Firewall to block port 8000 from external networks (allow only `127.0.0.1`).
 - The tools call the standard Windows `shutdown.exe` — no third-party binaries, no elevated privileges required for scheduling.
 
