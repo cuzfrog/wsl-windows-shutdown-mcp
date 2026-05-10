@@ -1,6 +1,6 @@
 # wsl-mcp-shutdown
 
-A tiny [MCP](https://modelcontextprotocol.io/) server that runs on your **Windows host** and lets an AI agent running inside **WSL** shut down, restart, cancel a shutdown, or lock your machine.
+A tiny [MCP](https://modelcontextprotocol.io/) server that runs on your **Windows host** and lets an AI agent running inside **WSL** shut down your PC or cancel a shutdown.
 
 ```
 WSL agent (Claude / any MCP client)
