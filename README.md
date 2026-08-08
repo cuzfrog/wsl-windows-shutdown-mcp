@@ -4,7 +4,7 @@ A tiny [MCP](https://modelcontextprotocol.io/) server that runs on your **Window
 
 ```
 WSL agent (Claude / any MCP client)
-        │  HTTP + SSE  (localhost:8000)
+        │  Streamable HTTP  (localhost:8000)
         ▼
   shutdown_server.py  (runs on Windows)
         │  subprocess
@@ -65,7 +65,7 @@ WSL agent (Claude / any MCP client)
 
    You should see:
    ```
-   [mcp-shutdown] Starting SSE server on port 8000
+   [mcp-shutdown] Starting Streamable HTTP server on port 8000
    ```
 
 ---
@@ -78,8 +78,8 @@ Add the server to your MCP client config. For **Claude Code** (`~/.claude/claude
 {
   "mcpServers": {
     "windows-shutdown": {
-      "type": "sse",
-      "url": "http://localhost:8000/sse"
+      "type": "streamable-http",
+      "url": "http://localhost:8000"
     }
   }
 }
@@ -93,13 +93,24 @@ WSL 2 has `localhost` forwarding enabled by default on modern Windows builds. If
 cat /etc/resolv.conf | grep nameserver | awk '{print $2}'
 ```
 
-Then use that IP (e.g. `http://172.22.16.1:8000/sse`) in your config.
+Then use that IP (e.g. `http://172.22.16.1:8000`) in your config.
 
 ### Quick connectivity test (from WSL bash)
 
 ```bash
-curl -N http://localhost:8000/sse
-# Should print an SSE stream header — Ctrl+C to exit
+curl -i -X POST http://localhost:8000 \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "initialize",
+    "params": {
+      "protocolVersion": "2024-06-18",
+      "capabilities": {},
+      "clientInfo": { "name": "curl-test", "version": "1.0" }
+    }
+  }'
 ```
 
 ---

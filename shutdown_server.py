@@ -11,6 +11,23 @@ Usage:
     MCP_SHUTDOWN_TOKEN=mysecret python shutdown_server.py
 """
 
+import sys
+
+# Silence noisy Windows asyncio ProactorEventLoop connection lost errors
+# when clients abruptly close or reset HTTP/SSE connections.
+if sys.platform == "win32":
+    from asyncio.proactor_events import _ProactorBasePipeTransport
+
+    _orig_call_connection_lost = _ProactorBasePipeTransport._call_connection_lost
+
+    def _silenced_call_connection_lost(self, exc):
+        try:
+            _orig_call_connection_lost(self, exc)
+        except (OSError, ConnectionResetError):
+            pass
+
+    _ProactorBasePipeTransport._call_connection_lost = _silenced_call_connection_lost
+
 import os
 import subprocess
 from mcp.server.fastmcp import FastMCP
@@ -20,9 +37,9 @@ from mcp.server.fastmcp import FastMCP
 # ---------------------------------------------------------------------------
 TOKEN = os.environ.get("MCP_SHUTDOWN_TOKEN", "")
 PORT  = int(os.environ.get("MCP_SHUTDOWN_PORT", "8000"))
-HOST  = os.environ.get("MCP_SHUTDOWN_HOST", "locaohost")
+HOST  = os.environ.get("MCP_SHUTDOWN_HOST", "localhost")
 
-mcp = FastMCP("windows-shutdown", port=PORT, host=HOST)
+mcp = FastMCP("windows-shutdown", port=PORT, host=HOST, streamable_http_path="/")
 
 def _auth(token: str) -> bool:
     """Return True if token auth is disabled or the token matches."""
@@ -92,9 +109,9 @@ def cancel_shutdown(token: str = "") -> str:
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    print(f"[mcp-shutdown] Starting SSE server on port {PORT}")
+    print(f"[mcp-shutdown] Starting Streamable HTTP server on port {PORT}")
     if TOKEN:
         print("[mcp-shutdown] Auth token is SET — clients must supply it.")
     else:
         print("[mcp-shutdown] WARNING: No MCP_SHUTDOWN_TOKEN set — server is open.")
-    mcp.run(transport="sse")
+    mcp.run(transport="streamable-http")

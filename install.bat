@@ -90,8 +90,8 @@ echo  Next steps:
 echo   1. (Optional) Open start_mcp.bat and set MCP_SHUTDOWN_TOKEN
 echo      to a secret value, then save.
 echo   2. Run start_mcp.bat now, or reboot — it will auto-start on login.
-echo   3. From WSL, configure your MCP client to connect to:
-echo         http://localhost:8000/sse
+echo   3. From WSL, configure your MCP client (type: streamable-http) to connect to:
+echo         http://localhost:8000
 echo.
 echo  To uninstall, run: uninstall.bat
 echo.
